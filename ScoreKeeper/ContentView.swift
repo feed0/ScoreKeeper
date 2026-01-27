@@ -9,8 +9,14 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @State private var players: [String] = ["Andre", "Bruna", "Carla"]
-    @State private var scores: [Int] = [0, 0, 0]
+    // MARK: - Properties
+    
+    @State private var players: [Player] = [
+        .init(name: "Andre", score: 0),
+        .init(name: "Bruna", score: 0),
+        .init(name: "Carla", score: 0)]
+    
+    // MARK: - Body
     
     var body: some View {
         VStack {
@@ -24,20 +30,21 @@ struct ContentView: View {
     // MARK: - ViewBuilder
     
     private var playersList: some View {
-        ForEach(0..<players.count, id: \.description) { index in
+        ForEach($players) { $player in
             
-            TextField("Name", text: $players[index])
-            Stepper("\(scores[index])", value: $scores[index])
+            TextField("Name", text: $player.name)
+            Stepper("\(player.score)", value: $player.score)
         }
     }
     
     private var addPlayerButton: some View {
         Button("Add player", systemImage: "plus") {
-            players.append("")
-            scores.append(0)
+            players.append(.init(name: "", score: 0))
         }
     }
 }
+
+// MARK: - Preview
 
 #Preview {
     ContentView()
