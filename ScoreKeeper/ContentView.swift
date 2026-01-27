@@ -19,8 +19,13 @@ struct ContentView: View {
     // MARK: - Body
     
     var body: some View {
-        VStack {
-            playersList
+        VStack(alignment: .leading) {
+            appTitle
+                .padding(.bottom)
+            
+            playersGrid
+                .padding(.vertical)
+
             Spacer()
             addPlayerButton
         }
@@ -29,11 +34,31 @@ struct ContentView: View {
     
     // MARK: - ViewBuilder
     
-    private var playersList: some View {
-        ForEach($players) { $player in
+    private var appTitle: some View {
+        Text("Score Keeper")
+            .font(.title)
+            .bold()
+    }
+    
+    private var playersGrid: some View {
+        Grid {
             
-            TextField("Name", text: $player.name)
-            Stepper("\(player.score)", value: $player.score)
+            GridRow {
+                Text("Player")
+                    .gridColumnAlignment(.leading)
+                Text("Score")
+            }
+            .font(.headline)
+
+            ForEach($players) { $player in
+                GridRow {
+                    TextField("Name", text: $player.name)
+                    
+                    Text("\(player.score)")
+                    Stepper("", value: $player.score)
+                        .labelsHidden()
+                }
+            }
         }
     }
     
