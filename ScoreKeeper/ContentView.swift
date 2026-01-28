@@ -20,46 +20,45 @@ struct ContentView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            appTitle
-                .padding(.bottom)
+            playersNavigationView
             
-            playersGrid
-                .padding(.vertical)
-
             Spacer()
+            
             addPlayerButton
         }
         .padding()
     }
     
     // MARK: - ViewBuilder
-    
-    private var appTitle: some View {
-        Text("Score Keeper")
-            .font(.title)
-            .bold()
-    }
-    
-    private var playersGrid: some View {
-        Grid {
-            
-            GridRow {
-                Text("Player")
-                    .gridColumnAlignment(.leading)
-                Text("Score")
-            }
-            .font(.headline)
+        
+    private var playersNavigationView: some View {
+        NavigationView {
+            List {
+                ForEach($players) { $player in
 
-            ForEach($players) { $player in
-                GridRow {
-                    TextField("Name", text: $player.name)
-                    
-                    Text("\(player.score)")
-                    Stepper("", value: $player.score)
-                        .labelsHidden()
+                    /// Player
+                    HStack {
+                        
+                        /// Player name
+                        TextField("Name", text: $player.name)
+                        
+                        /// Player score
+                        Text("\(player.score)")
+                        Stepper("", value: $player.score)
+                            .labelsHidden()
+                    }
                 }
+                /// Toolbar options: `onDelete` and `onMove` when `EditButton`
+                .onDelete { players.remove(atOffsets: $0) }
+                .onMove { players.move(fromOffsets: $0, toOffset: $1) }
             }
+            .navigationTitle("Score Keeper")
+            .toolbar {
+                EditButton()
+            }
+            
         }
+        
     }
     
     private var addPlayerButton: some View {
