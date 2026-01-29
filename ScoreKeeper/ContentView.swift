@@ -47,6 +47,7 @@ struct ContentView: View {
                         Stepper("", value: $player.score)
                             .labelsHidden()
                     }
+                    .foregroundStyle(player.randomCoulour)
                 }
                 /// Toolbar options: `onDelete` and `onMove` when `EditButton`
                 .onDelete { players.remove(atOffsets: $0) }

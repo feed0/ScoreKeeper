@@ -6,10 +6,13 @@
 //
 
 import Foundation
+import SwiftUI
 
 struct Player: Identifiable {
     let id = UUID()
     
     var name: String
     var score: Int
+    
+    let randomCoulour: Color = [.red, .blue, .yellow, .orange, .purple].randomElement()!
 }
