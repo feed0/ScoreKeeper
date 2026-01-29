@@ -34,6 +34,16 @@ struct ContentView: View {
     private var playersNavigationView: some View {
         NavigationView {
             List {
+                
+                /// Header
+                HStack {
+                    Text("Name")
+                    Spacer()
+                    Text("Score")
+                    Spacer()
+                }
+                
+                /// Players
                 ForEach($players) { $player in
 
                     /// Player
@@ -43,15 +53,20 @@ struct ContentView: View {
                         TextField("Name", text: $player.name)
                         
                         /// Player score
+                        let scoreBoundaries = 0...20
                         Text("\(player.score)")
-                        Stepper("", value: $player.score)
+                        Stepper("",
+                                value: $player.score,
+                                in: scoreBoundaries)
                             .labelsHidden()
                     }
                     .foregroundStyle(player.randomCoulour)
                 }
                 /// Toolbar options: `onDelete` and `onMove` when `EditButton`
                 .onDelete { players.remove(atOffsets: $0) }
-                .onMove { players.move(fromOffsets: $0, toOffset: $1) }
+                .onMove { players.move(
+                    fromOffsets: $0,
+                    toOffset: $1) }
             }
             .navigationTitle("Score Keeper")
             .toolbar {
