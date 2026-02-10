@@ -10,20 +10,14 @@ import SwiftUI
 struct ContentView: View {
     
     // MARK: - Properties
-    
-    @State private var players: [Player] = [
-        .init(name: "Andre", score: 0),
-        .init(name: "Bruna", score: 0),
-        .init(name: "Carla", score: 0)]
+    @State private var scoreboard = Scoreboard()
     
     // MARK: - Body
     
     var body: some View {
         VStack(alignment: .leading) {
             playersNavigationView
-            
             Spacer()
-            
             addPlayerButton
         }
         .padding()
@@ -44,7 +38,7 @@ struct ContentView: View {
                 }
                 
                 /// Players
-                ForEach($players) { $player in
+                ForEach($scoreboard.players) { $player in
 
                     /// Player
                     HStack {
@@ -63,8 +57,8 @@ struct ContentView: View {
                     .foregroundStyle(player.randomCoulour)
                 }
                 /// Toolbar options: `onDelete` and `onMove` when `EditButton`
-                .onDelete { players.remove(atOffsets: $0) }
-                .onMove { players.move(
+                .onDelete { scoreboard.players.remove(atOffsets: $0) }
+                .onMove { scoreboard.players.move(
                     fromOffsets: $0,
                     toOffset: $1) }
             }
@@ -79,7 +73,7 @@ struct ContentView: View {
     
     private var addPlayerButton: some View {
         Button("Add player", systemImage: "plus") {
-            players.append(.init(name: "", score: 0))
+            scoreboard.players.append(Player(name: "", score: 0))
         }
     }
 }
