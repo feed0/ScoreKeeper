@@ -10,7 +10,9 @@ import SwiftUI
 struct ContentView: View {
     
     // MARK: - Properties
+    
     @State private var scoreboard = Scoreboard()
+    private var startingPoints = 0
     
     // MARK: - Body
     
@@ -19,6 +21,13 @@ struct ContentView: View {
             playersNavigationView
             Spacer()
             addPlayerButton
+            Spacer()
+            
+            switch scoreboard.state {
+                case .setup: startGameButton
+                case .playing: endGameButton
+                case .gameOver: resetGameButton
+            }
         }
         .padding()
     }
@@ -71,9 +80,30 @@ struct ContentView: View {
         
     }
     
+    // MARK: Atoms
+    
     private var addPlayerButton: some View {
         Button("Add player", systemImage: "plus") {
             scoreboard.players.append(Player(name: "", score: 0))
+        }
+    }
+    
+    private var startGameButton: some View {
+        Button("Start Game", systemImage: "play.fill") {
+            scoreboard.state = .playing
+            scoreboard.resetScores(to: startingPoints)
+        }
+    }
+    
+    private var endGameButton: some View {
+        Button("End Game", systemImage: "stop.fill") {
+            scoreboard.state = .gameOver
+        }
+    }
+    
+    private var resetGameButton: some View {
+        Button("Reset Game", systemImage: "arrow.counterclockwise") {
+            scoreboard.state = .setup
         }
     }
 }
