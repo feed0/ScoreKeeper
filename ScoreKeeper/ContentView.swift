@@ -12,12 +12,13 @@ struct ContentView: View {
     // MARK: - Properties
     
     @State private var scoreboard = Scoreboard()
-    private var startingPoints = 0
+    @State private var startingPoints = 0
     
     // MARK: - Body
     
     var body: some View {
         VStack(alignment: .leading) {
+            SettingsView(startingPoints: $startingPoints)
             playersNavigationView
             Spacer()
             addPlayerButton
