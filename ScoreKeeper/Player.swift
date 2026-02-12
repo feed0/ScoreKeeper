@@ -16,3 +16,10 @@ struct Player: Identifiable {
     
     let randomCoulour: Color = [.red, .blue, .yellow, .orange, .purple].randomElement()!
 }
+
+extension Player: Equatable {
+    static func == (lhs: Player, rhs: Player) -> Bool {
+        lhs.name == rhs.name
+        && lhs.score == rhs.score
+    }
+}
