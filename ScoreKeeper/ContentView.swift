@@ -18,7 +18,9 @@ struct ContentView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            SettingsView(startingPoints: $startingPoints)
+            SettingsView(
+                startingPoints: $startingPoints,
+                doesHighestScoreWin: $scoreboard.doesHighestScoreWin)
             playersNavigationView
             Spacer()
             addPlayerButton
@@ -53,6 +55,12 @@ struct ContentView: View {
                     /// Player
                     HStack {
                         
+                        /// Crown
+                        if scoreboard.winners.contains(player) {
+                            Image(systemName: "crown.fill")
+                                .foregroundStyle(Color.yellow)
+                        }
+                        
                         /// Player name
                         TextField("Name", text: $player.name)
                         
@@ -76,9 +84,7 @@ struct ContentView: View {
             .toolbar {
                 EditButton()
             }
-            
         }
-        
     }
     
     // MARK: Atoms
