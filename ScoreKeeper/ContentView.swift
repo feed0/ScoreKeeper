@@ -14,18 +14,33 @@ struct ContentView: View {
     @State private var scoreboard = Scoreboard()
     @State private var startingPoints = 0
     
+    @State private var maxRounds = 1
+    @State private var currentRound = 1
+    
     // MARK: - Body
     
     var body: some View {
         NavigationView {
             VStack(alignment: .leading) {
-                settingsView
+                
+                headerTitle
+
                 playersList
+                
                 Spacer()
+                
+                if scoreboard.state == .setup {
+                    settingsView
+                }
                 
                 HStack() {
                     Spacer()
                     gameStateButtonsView
+                    
+                    if scoreboard.state != .setup {
+                        roundStepper
+                    }
+                    
                     Spacer()
                 }
             }
@@ -34,12 +49,11 @@ struct ContentView: View {
     }
     
     // MARK: - ViewBuilder
-    
-    private var settingsView: some View {
-        SettingsView(
-            startingPoints: $startingPoints,
-            doesHighestScoreWin: $scoreboard.doesHighestScoreWin)
-        .disabled(scoreboard.state != .setup)
+        
+    private var headerTitle: some View {
+        Text("Score Keeper")
+            .font(.largeTitle)
+            .bold()
     }
     
     private var playersList: some View {
@@ -75,12 +89,33 @@ struct ContentView: View {
                 fromOffsets: $0,
                 toOffset: $1) }
             
-            addPlayerButton
+            if scoreboard.state == .setup {
+                addPlayerButton
+            }
         }
-        .navigationTitle("Score Keeper")
         .toolbar {
             EditButton()
         }
+    }
+    
+    private var settingsView: some View {
+        SettingsView(
+            startingPoints: $startingPoints,
+            doesHighestScoreWin: $scoreboard.doesHighestScoreWin,
+            maxRounds: $maxRounds)
+        .disabled(scoreboard.state != .setup)
+    }
+
+    private var roundStepper: some View {
+        Stepper("Round: \(currentRound)/\(maxRounds)",
+                value: $currentRound, in: 1...99)
+            .foregroundStyle(.blue)
+            .disabled(currentRound > maxRounds)
+            .onChange(of: currentRound) { oldValue, newValue in
+                if newValue > maxRounds {
+                    scoreboard.state = .gameOver
+                }
+            }
     }
     
     private var gameStateButtonsView: some View {
@@ -135,7 +170,6 @@ struct ContentView: View {
             scoreboard.players.append(Player(name: "", score: 0))
         }
         .buttonStyle(GlassButtonStyle())
-        .opacity(scoreboard.state == .setup ? 1.0 : 0)
     }
     
     // MARK: - Private funcs
@@ -174,6 +208,7 @@ struct ContentView: View {
     
     private func handleResetGame() {
         scoreboard.state = .setup
+        currentRound = 1
     }
 }
 
