@@ -20,18 +20,18 @@ struct SettingsView: View {
             Divider()
             
             Picker("Win condition", selection: $doesHighestScoreWin) {
-                Text("Highest Score Wins")
+                Text("Highest Score")
                     .tag(true)
-                Text("Lowest Score Wins")
+                Text("Lowest Score")
                     .tag(false)
             }
             
             Picker("Starting points", selection: $startingPoints) {
-                Text("0 starting points")
+                Text("0 points")
                     .tag(0)
-                Text("10 starting points")
+                Text("10 points")
                     .tag(10)
-                Text("20 starting points")
+                Text("20 points")
                     .tag(20)
             }
         }

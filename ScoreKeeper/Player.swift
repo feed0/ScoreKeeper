@@ -14,7 +14,7 @@ struct Player: Identifiable {
     var name: String
     var score: Int
     
-    let randomCoulour: Color = [.red, .blue, .yellow, .orange, .purple].randomElement()!
+    let randomColor: Color = [.red, .blue, .yellow, .orange, .purple].randomElement()!
 }
 
 extension Player: Equatable {
