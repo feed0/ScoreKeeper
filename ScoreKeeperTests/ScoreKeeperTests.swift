@@ -63,4 +63,32 @@ struct ScoreKeeperTests {
         /// Assert
         #expect(winners == [Player(name: "Elisha", score: 0)])
     }
+    
+    @Test("There could be multiple winners", arguments: [true, false])
+    func multipleWinners(when doesHighestScoreWin: Bool) {
+        
+        /// Arrange
+        let scoreboard = Scoreboard(
+            players: [
+                Player(name: "Elisha", score: 0),
+                Player(name: "Andre", score: 4),
+                Player(name: "Felipe", score: 4),
+                Player(name: "Bruna", score: 0), ],
+            state: .gameOver,
+            doesHighestScoreWin: doesHighestScoreWin)
+        
+        /// Act
+        let winners = scoreboard.winners
+        
+        /// Assert
+        if doesHighestScoreWin {
+            #expect(scoreboard.winners.contains(
+                [Player(name: "Andre", score: 4),
+                 Player(name: "Felipe", score: 4),]))
+        } else {
+            #expect(scoreboard.winners.contains(
+                [Player(name: "Elisha", score: 0),
+                 Player(name: "Bruna", score: 0),]))
+        }
+    }
 }

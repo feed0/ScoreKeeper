@@ -44,7 +44,6 @@ struct Scoreboard {
             player.score == winningScore
         }
     }
-
     
     // MARK: - Methods
     
