@@ -17,6 +17,15 @@ struct ContentView: View {
     @State private var maxRounds = 1
     @State private var currentRound = 1
     
+    @State private var winningScore = 1
+    
+    // MARK: Computed properties
+    
+    private var isUnplayableConfiguration: Bool {
+        startingPoints == 0
+        && !scoreboard.doesHighestScoreWin
+    }
+    
     // MARK: - Body
     
     var body: some View {
@@ -83,6 +92,11 @@ struct ContentView: View {
                         playerScore: $player.score)
                 }
                 .foregroundStyle(player.randomColor)
+                .onChange(of: player.score) { oldValue, newValue in
+                    if newValue == winningScore {
+                        scoreboard.endGame()
+                    }
+                }
             }
             .onDelete { removePlayer(atOffsets: $0) }
             .onMove { movePlayer(
@@ -102,7 +116,8 @@ struct ContentView: View {
         SettingsView(
             startingPoints: $startingPoints,
             doesHighestScoreWin: $scoreboard.doesHighestScoreWin,
-            maxRounds: $maxRounds)
+            maxRounds: $maxRounds,
+            winningScore: $winningScore)
         .disabled(scoreboard.state != .setup)
     }
 
@@ -110,10 +125,11 @@ struct ContentView: View {
         Stepper("Round: \(currentRound)/\(maxRounds)",
                 value: $currentRound, in: 1...99)
             .foregroundStyle(.blue)
-            .disabled(currentRound > maxRounds)
+            .disabled(currentRound > maxRounds || scoreboard.state == .gameOver)
+            .opacity(currentRound > maxRounds || scoreboard.state == .gameOver ? 0.4 : 1)
             .onChange(of: currentRound) { oldValue, newValue in
                 if newValue > maxRounds {
-                    scoreboard.state = .gameOver
+                    scoreboard.endGame()
                 }
             }
     }
@@ -121,9 +137,10 @@ struct ContentView: View {
     private var gameStateButtonsView: some View {
         GameStateButtonsView(
             state: scoreboard.state,
-            onStart: { handleStartGame() },
-            onEnd: { handleEndGame() },
-            onReset: { handleResetGame() } )
+            onStart: { handleStartGameButton() },
+            onEnd: { handleEndGameButton() },
+            onReset: { handleResetGameButton() } )
+        .disabled(isUnplayableConfiguration)
     }
     
     // MARK: - Atoms
@@ -155,11 +172,17 @@ struct ContentView: View {
     }
     
     private func playerScoreStepper(playerScore: Binding<Int>) -> some View {
-        let scoreBoundaries = 0...20
+        var playerScoreBoundaries: ClosedRange<Int> {
+            if scoreboard.doesHighestScoreWin {
+                startingPoints...99
+            } else {
+                0...startingPoints
+            }
+        }
         
         return Stepper("",
             value: playerScore,
-            in: scoreBoundaries)
+            in: playerScoreBoundaries)
         .labelsHidden()
         .disabled(scoreboard.state != .playing)
         .opacity(scoreboard.state == .setup ? 0 : 1.0)
@@ -197,16 +220,16 @@ struct ContentView: View {
     
     // MARK: Game state buttons
     
-    private func handleStartGame() {
+    private func handleStartGameButton() {
         scoreboard.state = .playing
         scoreboard.resetScores(to: startingPoints)
     }
     
-    private func handleEndGame() {
-        scoreboard.state = .gameOver
+    private func handleEndGameButton() {
+        scoreboard.endGame()
     }
     
-    private func handleResetGame() {
+    private func handleResetGameButton() {
         scoreboard.state = .setup
         currentRound = 1
     }

@@ -52,4 +52,8 @@ struct Scoreboard {
             players[index].score = newValue
         }
     }
+    
+    mutating func endGame() {
+        state = .gameOver
+    }
 }
